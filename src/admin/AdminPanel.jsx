@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 // 🔴 এখানে আপনার লাইভ ব্যাকএন্ড লিংক বসান (যেমন: https://your-app.onrender.com)
-const API_BASE_URL = "https://vinance-backend.onrender.com"; 
+const API_BASE_URL = "https://my-project.onrender.com"; 
 
 const AdminPanel = () => {
   const { token } = useContext(UserContext);

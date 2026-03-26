@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 
 // 🔴 আপনার লাইভ ব্যাকএন্ড লিংক এখানে বসান
-const API_BASE_URL = "https://vinance-backend.onrender.com"; 
+const API_BASE_URL = "https://my-project.onrender.com"; 
 
 const Register = () => {
   const navigate = useNavigate();
