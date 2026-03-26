@@ -7,15 +7,17 @@ import {
   Upload, Mail, Lock, User, ArrowRight, ShieldCheck 
 } from 'lucide-react';
 
-// --- ১. ইমপোর্টস ও কনটেক্সট ---
 import { UserContext, UserProvider } from './context/UserContext'; 
 import Home from './pages/Home'; 
 import NotificationSystem from './components/NotificationSystem'; 
 import Deposit from './pages/Deposit'; 
 import Withdraw from './pages/Withdraw'; 
-import AdminPanel from './admin/AdminPanel'; // পাথ আপডেট করা হয়েছে: admin ফোল্ডার থেকে
+import AdminPanel from './admin/AdminPanel';
 
-// --- ২. হেল্পার কম্পোনেন্ট ---
+// 🚀 আপনার Vercel ব্যাকএন্ড লিঙ্কটি এখানে দিন
+const API_BASE_URL = "my-projact-sage.vercel.app"; 
+
+// --- হেল্পার কম্পোনেন্ট ---
 const NavItem = ({ to, icon, label }) => (
   <NavLink 
     to={to} 
@@ -33,15 +35,11 @@ const MobileNavItem = ({ to, icon, label }) => (
 
 const TradingChart = () => (
   <div className="w-full h-full min-h-[450px] md:min-h-[550px] bg-[#161a1e] rounded-xl overflow-hidden border border-gray-800 shadow-inner">
-    <iframe
-      title="TradingView Chart"
-      src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark&style=1&locale=en"
-      style={{ width: '100%', height: '100%', border: 'none' }}
-    ></iframe>
+    <iframe title="TradingView" src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark&style=1&locale=en" style={{ width: '100%', height: '100%', border: 'none' }}></iframe>
   </div>
 );
 
-// --- ৩. অথেনটিকেশন পেজ ---
+// --- লগইন পেজ (আপডেটেড) ---
 const Login = () => {
   const { login } = useContext(UserContext);
   const navigate = useNavigate();
@@ -51,7 +49,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/login', { email, password });
+      const res = await axios.post(`${API_BASE_URL}/api/login`, { email, password });
       if (res.data.token) {
         login(res.data.user, res.data.token);
         navigate('/dashboard');
@@ -60,10 +58,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0e11] flex items-center justify-center p-6 relative overflow-hidden text-left">
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="w-full max-w-md bg-[#1e2329] border border-gray-800 rounded-3xl p-10 shadow-2xl relative z-10">
-        <h1 className="text-3xl font-bold text-yellow-500 mb-2 italic tracking-tighter uppercase">VINANCE</h1>
+    <div className="min-h-screen bg-[#0b0e11] flex items-center justify-center p-6 text-left">
+      <div className="w-full max-w-md bg-[#1e2329] border border-gray-800 rounded-3xl p-10 shadow-2xl">
+        <h1 className="text-3xl font-bold text-yellow-500 mb-2 italic uppercase">VINANCE</h1>
         <p className="text-gray-400 mb-8 font-medium">Log In to your account</p>
         <form onSubmit={handleLogin} className="space-y-6">
           <input type="email" placeholder="Email Address" required onChange={(e)=>setEmail(e.target.value)} className="w-full bg-[#0b0e11] border border-gray-800 rounded-xl py-3 px-4 text-white outline-none focus:border-yellow-500" />
@@ -76,6 +73,7 @@ const Login = () => {
   );
 };
 
+// --- রেজিস্টার পেজ (আপডেটেড) ---
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -83,7 +81,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/register', formData);
+      await axios.post(`${API_BASE_URL}/api/register`, formData);
       alert("Registration Successful! Please Login.");
       navigate('/login');
     } catch (err) { alert(err.response?.data?.message || "Registration failed!"); }
@@ -92,7 +90,7 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-[#0b0e11] flex items-center justify-center p-6 text-left">
       <div className="w-full max-w-md bg-[#1e2329] border border-gray-800 rounded-3xl p-10 shadow-2xl">
-        <h1 className="text-3xl font-bold text-yellow-500 mb-2 italic tracking-tighter uppercase">Vinance</h1>
+        <h1 className="text-3xl font-bold text-yellow-500 mb-2 italic uppercase">Vinance</h1>
         <form className="space-y-5" onSubmit={handleRegister}>
           <input type="text" placeholder="Full Name" required onChange={(e)=>setFormData({...formData, name: e.target.value})} className="w-full bg-[#0b0e11] border border-gray-800 rounded-xl py-3 px-4 text-white outline-none focus:border-yellow-500" />
           <input type="email" placeholder="Email Address" required onChange={(e)=>setFormData({...formData, email: e.target.value})} className="w-full bg-[#0b0e11] border border-gray-800 rounded-xl py-3 px-4 text-white outline-none focus:border-yellow-500" />
@@ -105,7 +103,7 @@ const Register = () => {
   );
 };
 
-// --- ৪. ড্যাশবোর্ড, মার্কেট, ট্রেড ও ওয়ালেট ---
+// --- ড্যাশবোর্ড ---
 const Dashboard = ({ cryptoData }) => {
   const { user } = useContext(UserContext); 
   const navigate = useNavigate();
@@ -139,6 +137,7 @@ const Dashboard = ({ cryptoData }) => {
   );
 };
 
+// --- মার্কেট ---
 const Market = ({ cryptoData }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -168,13 +167,14 @@ const Market = ({ cryptoData }) => {
   );
 };
 
+// --- ট্রেড পেজ (আপডেটেড) ---
 const TradePage = () => {
   const [amount, setAmount] = useState('');
   const { user, token, setUser } = useContext(UserContext); 
   const handleTrade = async (type) => {
     if (!amount || amount <= 0) return alert("Enter valid amount");
     try {
-      const res = await axios.post('http://localhost:5000/api/trade', { type, amount, symbol: 'BTC' }, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.post(`${API_BASE_URL}/api/trade`, { type, amount, symbol: 'BTC' }, { headers: { Authorization: `Bearer ${token}` } });
       alert(res.data.message);
       setUser({ ...user, balance: res.data.newBalance });
       setAmount('');
@@ -199,6 +199,7 @@ const TradePage = () => {
   );
 };
 
+// --- ওয়ালেট পেজ ---
 const WalletPage = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -216,7 +217,7 @@ const WalletPage = () => {
   );
 };
 
-// --- ৫. Main Content Router Logic ---
+// --- মেইন কন্টেন্ট ---
 const AppContent = ({ cryptoData }) => {
   const { token, logout, loading, user } = useContext(UserContext); 
   const location = useLocation();
@@ -238,11 +239,7 @@ const AppContent = ({ cryptoData }) => {
             <NavItem to="/market" icon={<BarChart3 size={22}/>} label="Market" />
             <NavItem to="/trade" icon={<TrendingUp size={22}/>} label="Trade" />
             <NavItem to="/wallet" icon={<Wallet size={22}/>} label="Wallet" />
-            
-            {/* Admin access check */}
-            {user?.role === 'admin' && (
-              <NavItem to="/admin" icon={<ShieldCheck size={22}/>} label="Admin Panel" />
-            )}
+            {user?.role === 'admin' && <NavItem to="/admin" icon={<ShieldCheck size={22}/>} label="Admin Panel" />}
           </nav>
           <button onClick={logout} className="p-4 text-gray-500 hover:text-red-500 flex items-center gap-4 font-bold text-sm transition-colors border-t border-gray-800/50 mt-4"><LogOut size={22}/> <span className="hidden lg:inline">Sign Out</span></button>
         </aside>
@@ -275,13 +272,7 @@ const AppContent = ({ cryptoData }) => {
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/deposit" element={<Deposit />} />
             <Route path="/withdraw" element={<Withdraw />} />
-
-            {/* Admin Protected Route */}
-            <Route 
-              path="/admin" 
-              element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/dashboard" />} 
-            />
-
+            <Route path="/admin" element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/dashboard" />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
@@ -299,7 +290,7 @@ const AppContent = ({ cryptoData }) => {
   );
 };
 
-// --- ৬. Root Component ---
+// --- Root Component ---
 export default function App() {
   const [cryptoData, setCryptoData] = useState([
     { id: '1', name: 'Bitcoin', symbol: 'btc', price: 0, change: 0, up: true },
