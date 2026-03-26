@@ -5,8 +5,7 @@ import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { UserContext } from '../context/UserContext';
 
 // ✅ আপনার লাইভ ব্যাকএন্ড লিংক ফিক্স করা হয়েছে
-const API_BASE_URL = "https://vinance-backend.onrender.com"; 
-
+const API_BASE_URL = "https://vinance-backend.onrender.com";
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(UserContext); 
